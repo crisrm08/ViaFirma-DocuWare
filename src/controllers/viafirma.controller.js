@@ -11,7 +11,13 @@ const recibirCallBackViaFirma = async (req, res) => {
     const messageCode = viaFirmaCBResponse.links[0].messageCode;
       
     if (viaFirmaCBResponse.status === "RESPONSED") {
-        console.log("Message code obtenido: ", messageCode);
+        const externalCode = viaFirmaCBResponse.externalCode;
+        const params = new URLSearchParams(externalCode.replaceAll(";", "&"));
+        const documentId = params.get("documentId");
+        const fileCabinetId = params.get("fileCabinetId");
+        console.log("DocumentId: ", documentId);
+        console.log("FileCabinetId: ", fileCabinetId);
+        
         const response = await fetch(`https://sandbox.viafirma.com/documents/api/v3/documents/download/signed/${messageCode}`, {
                 method: 'GET',
                 headers: { Authorization: `Basic ${auth}` }
