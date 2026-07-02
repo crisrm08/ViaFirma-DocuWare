@@ -1,5 +1,5 @@
 require('dotenv/config')
-const { createDataRecord, uploadDocument } = require("../services/docuware.service");
+const { appendDocument } = require("../services/docuware.service");
 
 const vfUser = process.env.VIAFIRMA_API_USER;
 const vfPassword = process.env.VIAFIRMA_API_PASSWORD;
@@ -36,9 +36,8 @@ const recibirCallBackViaFirma = async (req, res) => {
             const arrayBuffer = await pdfResponse.arrayBuffer();
             const pdfBuffer = Buffer.from(arrayBuffer);
 
-            const dataRecordId = await createDataRecord(messageCode);
-            const uploadResult = await uploadDocument(dataRecordId, pdfBuffer);
-            console.log("Resultado del upload a DocuWare: ", uploadResult);
+            const appendDocResponse = await appendDocument(documentId, fileCabinetId, pdfBuffer);
+            console.log("Resultado del upload a DocuWare: ", appendDocResponse);
         }
     }
     return res.status(200).json({ message: "Callback recibido correctamente", data: viaFirmaCBResponse });
