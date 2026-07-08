@@ -1,13 +1,15 @@
+require("dotenv").config();
+
 async function fetchDocuWareToken() {
-  const url =
+  const url = process.env.DOCUWARE_TOKEN_URL ||
     "https://login-us.docuware.cloud/da373611-6d3d-43d0-9677-370481859974/connect/token";
 
   const body = new URLSearchParams({
-    grant_type: "password",
-    scope: "docuware.platform",
-    client_id: "docuware.platform.net.client",
-    username: "ca.rodriguez@grupocsi.com.do",
-    password: "Abcd1234abcd1234!",
+    grant_type: process.env.DOCUWARE_GRANT_TYPE,
+    scope: process.env.DOCUWARE_SCOPE,
+    client_id: process.env.DOCUWARE_CLIENT_ID,
+    username: process.env.DOCUWARE_USERNAME,
+    password: process.env.DOCUWARE_PASSWORD,
   });
 
   const response = await fetch(url, {
@@ -20,7 +22,7 @@ async function fetchDocuWareToken() {
   });
 
   if (!response.ok) {
-    throw new Error(`Error: ${response.status}`);
+    throw new Error(`Error: ${response.status}, error text: ${await response.text()}  `);
   }
 
   const data = await response.json();
