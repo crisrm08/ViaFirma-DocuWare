@@ -37,7 +37,8 @@ const recibirCallBackViaFirma = async (req, res) => {
             const pdfBuffer = Buffer.from(arrayBuffer);
 
             const appendDocResponse = await appendDocument(documentId, fileCabinetId, pdfBuffer);
-            console.log("Resultado del upload a DocuWare: ", appendDocResponse);
+            console.log("Documento firmado enviado a DocuWare.");
+            console.log("Fecha y hora exacta de envío a DocuWare:", new Date().toLocaleString("sv-SE", { timeZone: "America/Santo_Domingo", hour12: false }));
         }
     }
     return res.status(200).json({ message: "Callback recibido correctamente", data: viaFirmaCBResponse });
