@@ -1,5 +1,5 @@
 require('dotenv/config')
-const { appendDocument } = require("../services/docuware.service");
+const { createDataRecord, uploadDocument } = require("../services/docuware.service");
 
 const vfUser = process.env.VIAFIRMA_API_USER;
 const vfPassword = process.env.VIAFIRMA_API_PASSWORD;
@@ -11,13 +11,7 @@ const recibirCallBackViaFirma = async (req, res) => {
     const messageCode = viaFirmaCBResponse.links[0].messageCode;
       
     if (viaFirmaCBResponse.status === "RESPONSED") {
-        const externalCode = viaFirmaCBResponse.externalCode;
-        const params = new URLSearchParams(externalCode.replaceAll(";", "&"));
-        const documentId = params.get("documentId");
-        const fileCabinetId = params.get("fileCabinetId");
-        console.log("DocumentId: ", documentId);
-        console.log("FileCabinetId: ", fileCabinetId);
-        
+        console.log("Message code obtenido: ", messageCode);
         const response = await fetch(`https://sandbox.viafirma.com/documents/api/v3/documents/download/signed/${messageCode}`, {
                 method: 'GET',
                 headers: { Authorization: `Basic ${auth}` }
@@ -31,12 +25,13 @@ const recibirCallBackViaFirma = async (req, res) => {
         }
         else {
             const downloadData = await response.json();
-            console.log("Download link obtenido: ", downloadData.link);
+            console.log("Download link obtenido");
             const pdfResponse = await fetch(downloadData.link, { method: 'GET' });
             const arrayBuffer = await pdfResponse.arrayBuffer();
             const pdfBuffer = Buffer.from(arrayBuffer);
 
-            const appendDocResponse = await appendDocument(documentId, fileCabinetId, pdfBuffer);
+            const dataRecordId = await createDataRecord(messageCode);
+            const uploadResult = await uploadDocument(dataRecordId, pdfBuffer);
             console.log("Documento firmado enviado a DocuWare.");
             console.log("Fecha y hora exacta de envío a DocuWare:", new Date().toLocaleString("sv-SE", { timeZone: "America/Santo_Domingo", hour12: false }));
         }

@@ -1,4 +1,5 @@
 require("dotenv").config();
+const fileCabinetId = process.env.DOCUWARE_FILE_CABINET_ID;
 
 async function fetchDocuWareToken() {
   const url = process.env.DOCUWARE_TOKEN_URL ||
@@ -29,32 +30,69 @@ async function fetchDocuWareToken() {
   return data.access_token;
 }
 
-async function appendDocument(docId, fileCabId, buffer) {
+async function createDataRecord(documentId) {
     const docuwareToken = await fetchDocuWareToken();
+    const fields = {
+        "Fields": [
+            {
+                "FieldName": "MESSAGECODE",
+                "Item": documentId
+            }
+        ]
+    }
+
+    const dataRecordResponse = await fetch(`https://grupocsidemo.docuware.cloud/DocuWare/Platform/FileCabinets/${fileCabinetId}/Documents`,
+        {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${docuwareToken}`,
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(fields),
+        }   
+    );
+
+    if (!dataRecordResponse.ok) {
+        const errorText = await dataRecordResponse.text();
+        throw new Error(`Error creating data record: ${dataRecordResponse.status} - ${errorText}`);
+    }
     
-    const appendDocResponse = await fetch(
-        `https://grupocsidemo.docuware.cloud/DocuWare/Platform/FileCabinets/${fileCabId}/Sections?DocId=${docId}`,
+    const responseText = await dataRecordResponse.text();
+    const responseData = JSON.parse(responseText);
+    console.log("DataRecord Id devuelto: ",responseData.Id);
+    
+    return responseData.Id;
+}
+
+async function uploadDocument(dataRecordId, buffer) {
+    const docuwareToken = await fetchDocuWareToken();
+    console.log("DataRecordId: ", dataRecordId);
+    
+
+    const uploadDocResponse = await fetch(
+        `https://grupocsidemo.docuware.cloud/DocuWare/Platform/FileCabinets/${fileCabinetId}/Sections?DocId=${dataRecordId}`,
         {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${docuwareToken}`,
                 Accept: "application/json",
                 "Content-Type": "application/pdf",
-                "Content-Disposition": `file; filename="${docId}.pdf"`,
+                "Content-Disposition": `file; filename="${dataRecordId}.pdf"`,
                 "X-File-ModifiedDate": new Date().toISOString()
             },
             body: buffer
         }
     );
 
-    if (!appendDocResponse.ok) {
-        const errorText = await appendDocResponse.text();
-        throw new Error(`Error appending document: ${appendDocResponse.status} - ${errorText}`);
+    if (!uploadDocResponse.ok) {
+        const errorText = await uploadDocResponse.text();
+        throw new Error(`Error uploading document: ${uploadDocResponse.status} - ${errorText}`);
     }
 
-    const responseText = await appendDocResponse.text();
+    const responseText = await uploadDocResponse.text();
 
     return responseText ? JSON.parse(responseText) : null;
 }
 
-module.exports = {appendDocument};
+module.exports = {createDataRecord, uploadDocument};
