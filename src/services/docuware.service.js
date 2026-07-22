@@ -30,13 +30,28 @@ async function fetchDocuWareToken() {
   return data.access_token;
 }
 
-async function createDataRecord(documentId) {
+async function createDataRecord(MessageCode, SetCode) {
     const docuwareToken = await fetchDocuWareToken();
+    const asuntoCorreo = "Proceso " + SetCode + " finalizado";
+    const nombreArchivoAdjunto = SetCode + ".pdf";
+    
     const fields = {
         "Fields": [
             {
                 "FieldName": "MESSAGECODE",
-                "Item": documentId
+                "Item": MessageCode
+            },
+            {
+                "FieldName": "SETCODE",
+                "Item": SetCode
+            },
+            {
+                "FieldName": "ASUNTO_CORREO",
+                "Item": asuntoCorreo
+            },
+            {
+                "FieldName": "NOMBRE_ARCHIVO",
+                "Item": nombreArchivoAdjunto
             }
         ]
     }
