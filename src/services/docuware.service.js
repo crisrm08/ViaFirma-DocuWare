@@ -2,8 +2,7 @@ require("dotenv").config();
 const fileCabinetId = process.env.DOCUWARE_FILE_CABINET_ID;
 
 async function fetchDocuWareToken() {
-  const url = process.env.DOCUWARE_TOKEN_URL ||
-    "https://login-us.docuware.cloud/da373611-6d3d-43d0-9677-370481859974/connect/token";
+  const url = process.env.DOCUWARE_TOKEN_URL;
 
   const body = new URLSearchParams({
     grant_type: process.env.DOCUWARE_GRANT_TYPE,
@@ -56,7 +55,7 @@ async function createDataRecord(MessageCode, SetCode) {
         ]
     }
 
-    const dataRecordResponse = await fetch(`https://grupocsidemo.docuware.cloud/DocuWare/Platform/FileCabinets/${fileCabinetId}/Documents`,
+    const dataRecordResponse = await fetch(`${process.env.DOCUWARE_DOMAIN}/DocuWare/Platform/FileCabinets/${fileCabinetId}/Documents`,
         {
             method: 'POST',
             headers: {
@@ -83,10 +82,8 @@ async function createDataRecord(MessageCode, SetCode) {
 async function uploadDocument(dataRecordId, buffer) {
     const docuwareToken = await fetchDocuWareToken();
     console.log("DataRecordId: ", dataRecordId);
-    
 
-    const uploadDocResponse = await fetch(
-        `https://grupocsidemo.docuware.cloud/DocuWare/Platform/FileCabinets/${fileCabinetId}/Sections?DocId=${dataRecordId}`,
+    const uploadDocResponse = await fetch(`${process.env.DOCUWARE_DOMAIN}/DocuWare/Platform/FileCabinets/${fileCabinetId}/Sections?DocId=${dataRecordId}`,
         {
             method: 'POST',
             headers: {
