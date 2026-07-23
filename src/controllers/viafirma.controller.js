@@ -8,17 +8,23 @@ const auth = Buffer.from(`${vfUser}:${vfPassword}`).toString('base64');
 
 const recibirCallBackViaFirma = async (req, res) => {
     const viaFirmaCBResponse = req.body;
+    console.log("Callback completo: ", viaFirmaCBResponse);
+    
     const messageCode = viaFirmaCBResponse.links[0].messageCode;
     const setCode = viaFirmaCBResponse.code;
     
     if (viaFirmaCBResponse.status === "RESPONSED") {
         console.log("Message code obtenido: ", messageCode);
         console.log("Set code obtenido: ", setCode);
-        const response = await fetch(`https://sandbox.viafirma.com/documents/api/v3/documents/download/signed/${messageCode}`, {
+        console.log("User viafirma: ", vfUser);
+        console.log("Password viafirma: ", vfPassword);
+        
+        const response = await fetch(`https://documents.viafirma.com/documents/api/v3/documents/download/signed/${messageCode}`, {
                 method: 'GET',
                 headers: { Authorization: `Basic ${auth}` }
             }
         )
+        //https://documents.viafirma.com/documents/api/v3/documents/download/signed/{{messageCode}}
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -37,6 +43,9 @@ const recibirCallBackViaFirma = async (req, res) => {
             console.log("Documento firmado enviado a DocuWare.");
             console.log("Fecha y hora exacta de envío a DocuWare:", new Date().toLocaleString("sv-SE", { timeZone: "America/Santo_Domingo", hour12: false }));
         }
+    }
+    else {
+        console.log(`SET aún no finalizado. Estado actual: ${viaFirmaCBResponse.status}`);
     }
     return res.status(200).json({ message: "Callback recibido correctamente", data: viaFirmaCBResponse });
 }
