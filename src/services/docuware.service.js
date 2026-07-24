@@ -37,15 +37,7 @@ async function createDataRecord(MessageCode, SetCode) {
     const fields = {
         "Fields": [
             {
-                "FieldName": "MESSAGECODE",
-                "Item": MessageCode
-            },
-            {
-                "FieldName": "SETCODE",
-                "Item": SetCode
-            },
-            {
-                "FieldName": "ASUNTO_CORREO",
+                "FieldName": "VIAFIRMA_ESTADO_DEL_PROCESO",
                 "Item": asuntoCorreo
             },
             {
