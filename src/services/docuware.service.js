@@ -33,6 +33,13 @@ async function createDataRecord(MessageCode, SetCode) {
     const docuwareToken = await fetchDocuWareToken();
     const asuntoCorreo = "Proceso " + SetCode + " finalizado";
     const nombreArchivoAdjunto = SetCode + ".pdf";
+    const tipoDocumento = "Contrato";
+    const fechaDocumento = new Date().toISOString();
+    const Workflow_WF= "CTR - Vincular Contrato Viafirma a Expediente";
+    const Actividad_WF = "Inicio";
+    const Estado_WF = "Pendiente";
+    const estadoDocumento = "Contrato Firmado Viafirma";
+    const direccionCorreo = "notifications@viafirma.net";
     
     const fields = {
         "Fields": [
@@ -43,7 +50,32 @@ async function createDataRecord(MessageCode, SetCode) {
             {
                 "FieldName": "NOMBRE_ARCHIVO",
                 "Item": nombreArchivoAdjunto
+            },
+            {
+                "FieldName": "FECHA_DOCUMENTO",
+                "Item": fechaDocumento
+            },
+            {
+                "FieldName": "TIPO_DE_DOCUMENTO",
+                "Item": tipoDocumento
+            },
+            {
+                "FieldName": "WORKFLOW_WF",
+                "Item": Workflow_WF
+            },
+            {
+                "FieldName": "ACTIVIDAD_WF",
+                "Item": Actividad_WF
+            },
+            {
+                "FieldName": "ESTADO_WF",
+                "Item": Estado_WF
+            },
+            {
+                "FieldName": "ESTADO_DEL_DOCUMENTO",
+                "Item": estadoDocumento
             }
+
         ]
     }
 
