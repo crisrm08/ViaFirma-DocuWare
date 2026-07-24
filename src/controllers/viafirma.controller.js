@@ -8,7 +8,6 @@ const auth = Buffer.from(`${vfUser}:${vfPassword}`).toString('base64');
 
 const recibirCallBackViaFirma = async (req, res) => {
     const viaFirmaCBResponse = req.body;
-    console.log("Callback completo: ", viaFirmaCBResponse);
     
     const messageCode = viaFirmaCBResponse.links[0].messageCode;
     const setCode = viaFirmaCBResponse.code;
