@@ -79,7 +79,7 @@ async function createDataRecord(MessageCode, SetCode) {
     return responseData.Id;
 }
 
-async function uploadDocument(dataRecordId, buffer) {
+async function uploadDocument(dataRecordId, buffer, SetCode) {
     const docuwareToken = await fetchDocuWareToken();
     console.log("DataRecordId: ", dataRecordId);
 
@@ -90,7 +90,7 @@ async function uploadDocument(dataRecordId, buffer) {
                 Authorization: `Bearer ${docuwareToken}`,
                 Accept: "application/json",
                 "Content-Type": "application/pdf",
-                "Content-Disposition": `file; filename="${dataRecordId}.pdf"`,
+                "Content-Disposition": `file; filename="${SetCode}.pdf"`,
                 "X-File-ModifiedDate": new Date().toISOString()
             },
             body: buffer
