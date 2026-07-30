@@ -31,7 +31,7 @@ async function fetchDocuWareToken() {
 
 async function createDataRecord(MessageCode, SetCode) {
     const docuwareToken = await fetchDocuWareToken();
-    const asuntoCorreo = "Proceso " + SetCode + " finalizado";
+    const asuntoCorreo = "Documents Cloud: proceso " + SetCode + " Finalizado";
     const nombreArchivoAdjunto = SetCode + ".pdf";
     const tipoDocumento = "Contrato";
     const fechaDocumento = new Date().toISOString();
@@ -40,12 +40,13 @@ async function createDataRecord(MessageCode, SetCode) {
     const Estado_WF = "Pendiente";
     const estadoDocumento = "Contrato Firmado Viafirma";
     const direccionCorreo = "notifications@viafirma.net";
+    const viaFirmaRefProceso = SetCode;
     
     const fields = {
         "Fields": [
             {
                 "FieldName": "VIAFIRMA_ESTADO_DEL_PROCESO",
-                "Item": asuntoCorreo
+                "Item": direccionCorreo
             },
             {
                 "FieldName": "NOMBRE_ARCHIVO",
@@ -74,8 +75,11 @@ async function createDataRecord(MessageCode, SetCode) {
             {
                 "FieldName": "ESTADO_DEL_DOCUMENTO",
                 "Item": estadoDocumento
+            },
+            {
+                "FieldName": "VIAFIRMA_REF_DEL_PROCESO",
+                "Item": asuntoCorreo
             }
-
         ]
     }
 
