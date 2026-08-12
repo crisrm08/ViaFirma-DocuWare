@@ -7,18 +7,19 @@ const vfPassword = process.env.VIAFIRMA_API_PASSWORD;
 const auth = Buffer.from(`${vfUser}:${vfPassword}`).toString('base64');
 
 const recibirCallBackViaFirma = async (req, res) => {
+    const apiKey = req.headers["x-api-key"];
+
+    if (apiKey !== process.env.VIAFIRMA_CALLBACK_API_KEY) {
+        return res.status(401).json({error: "No autorizado"});
+    }
     const viaFirmaCBResponse = req.body;
     
     const messageCode = viaFirmaCBResponse.links[0].messageCode;
     const setCode = viaFirmaCBResponse.code;
     
     if (viaFirmaCBResponse.status === "RESPONSED") {
-        console.log("Message code obtenido: ", messageCode);
         console.log("Set code obtenido: ", setCode);
-        console.log("User viafirma: ", vfUser);
-        console.log("Password viafirma: ", vfPassword);
-        
-        const response = await fetch(`https://documents.viafirma.com/documents/api/v3/documents/download/signed/${messageCode}`, {
+        const response = await fetch(`https://sandbox.viafirma.com/documents/api/v3/documents/download/signed/${messageCode}`, {
                 method: 'GET',
                 headers: { Authorization: `Basic ${auth}` }
             }
