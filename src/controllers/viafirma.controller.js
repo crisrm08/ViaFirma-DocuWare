@@ -10,6 +10,8 @@ const recibirCallBackViaFirma = async (req, res) => {
     const apiKey = req.headers["x-api-key"];
 
     if (apiKey !== process.env.VIAFIRMA_CALLBACK_API_KEY) {
+           console.log("No autorizado");
+        console.log("ApiKey obtenido: ", apiKey);
         return res.status(401).json({error: "No autorizado"});
     }
     const viaFirmaCBResponse = req.body;

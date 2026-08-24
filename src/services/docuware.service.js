@@ -31,59 +31,25 @@ async function fetchDocuWareToken() {
 
 async function createDataRecord(MessageCode, SetCode) {
     const docuwareToken = await fetchDocuWareToken();
-    const asuntoCorreo = "Documents Cloud: proceso " + SetCode + " Finalizado";
-    const nombreArchivoAdjunto = SetCode + ".pdf";
-    const tipoDocumento = "Contrato";
-    const fechaDocumento = new Date().toISOString();
-    const Workflow_WF= "CTR - Vincular Contrato Viafirma a Expediente";
-    const Actividad_WF = "Inicio";
-    const Estado_WF = "Pendiente";
-    const estadoDocumento = "Contrato Firmado Viafirma";
-    const direccionCorreo = "notifications@viafirma.net";
-    const viaFirmaRefProceso = SetCode;
+    const setCode = SetCode;
+    const messageCode = MessageCode;
     
     const fields = {
         "Fields": [
             {
-                "FieldName": "VIAFIRMA_ESTADO_DEL_PROCESO",
-                "Item": direccionCorreo
+                "FieldName": "SETCODE",
+                "Item": setCode
             },
             {
-                "FieldName": "NOMBRE_ARCHIVO",
-                "Item": nombreArchivoAdjunto
+                "FieldName": "MESSAGECODE",
+                "Item": messageCode
             },
-            {
-                "FieldName": "FECHA_DOCUMENTO",
-                "Item": fechaDocumento
-            },
-            {
-                "FieldName": "TIPO_DE_DOCUMENTO",
-                "Item": tipoDocumento
-            },
-            {
-                "FieldName": "WORKFLOW_WF",
-                "Item": Workflow_WF
-            },
-            {
-                "FieldName": "ACTIVIDAD_WF",
-                "Item": Actividad_WF
-            },
-            {
-                "FieldName": "ESTADO_WF",
-                "Item": Estado_WF
-            },
-            {
-                "FieldName": "ESTADO_DEL_DOCUMENTO",
-                "Item": estadoDocumento
-            },
-            {
-                "FieldName": "VIAFIRMA_REF_DEL_PROCESO",
-                "Item": asuntoCorreo
-            }
+           
         ]
     }
 
     const dataRecordResponse = await fetch(`${process.env.DOCUWARE_DOMAIN}/DocuWare/Platform/FileCabinets/${fileCabinetId}/Documents`,
+        
         {
             method: 'POST',
             headers: {
