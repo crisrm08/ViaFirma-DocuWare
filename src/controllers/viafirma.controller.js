@@ -40,15 +40,9 @@ const recibirCallBackViaFirma = async (req, res) => {
             const pdfResponse = await fetch(downloadData.link, { method: 'GET' });
             const arrayBuffer = await pdfResponse.arrayBuffer();
             const pdfBuffer = Buffer.from(arrayBuffer);
-
-            if (viaFirmaCBResponse.externalCode) {
-                const dataRecordId = await createDataRecord(messageCode, viaFirmaCBResponse.externalCode);
-                const uploadResult = await uploadDocument(dataRecordId, pdfBuffer, viaFirmaCBResponse.externalCode);
-            }
-            else {
-                const dataRecordId = await createDataRecord(messageCode, setCode);
-                const uploadResult = await uploadDocument(dataRecordId, pdfBuffer, setCode);
-            }
+            
+            const dataRecordId = await createDataRecord(messageCode, setCode);
+            const uploadResult = await uploadDocument(dataRecordId, pdfBuffer, setCode);
            
             console.log("Documento firmado enviado a DocuWare.");
             console.log("Fecha y hora exacta de envío a DocuWare:", new Date().toLocaleString("sv-SE", { timeZone: "America/Santo_Domingo", hour12: false }));
